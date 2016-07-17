@@ -18,52 +18,60 @@ public class WeatherService {
     //返回天气信息的集合
     public static List<WeatherInfo> getWeatherInfos(InputStream is) throws Exception {
         //得到pull解析器
-        Log.i(TAG, "getWeatherInfos: WeatherService开始运行");
         XmlPullParser parser = Xml.newPullParser();
-        Log.i(TAG, "getWeatherInfos: WeatherService开始运行");
         //初始化解析器，第一个参数代表含xml的数据
         parser.setInput(is, "utf-8");
-        Log.i(TAG, "getWeatherInfos: WeatherService开始运行");
         List<WeatherInfo> weatherInfos = null;
         WeatherInfo weatherInfo = null;
         //得到当前事件的类型
         int type = parser.getEventType();
-        Log.i(TAG, "getWeatherInfos: WeatherService开始运行");
         //END_DOCUMENT文档结束标签
+        Log.i(TAG, "getWeatherInfos: "
+                +XmlPullParser.START_DOCUMENT+","
+                +XmlPullParser.START_TAG+","
+                +XmlPullParser.END_TAG+","
+                +XmlPullParser.END_DOCUMENT);
         while (type != XmlPullParser.END_DOCUMENT) {
             switch (type) {
                 //一个结点的开始标签
                 case XmlPullParser.START_TAG:
                     //解析到全局开始的标签infos根结点
                     if ("infos".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: infos的type值"+type);
                         weatherInfos = new ArrayList<WeatherInfo>();
                     } else if ("city".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: city的type值"+type);
                         weatherInfo = new WeatherInfo();
                         String idStr = parser.getAttributeValue(0);
-                        Log.i(TAG, "getWeatherInfos: " + idStr);
                         weatherInfo.setId(Integer.parseInt(idStr));
                     } else if ("temp".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: temp的type值"+type);
                         //parset.nextText();得到该tag结点中的内容
                         String temp = parser.nextText();
                         weatherInfo.setTemp(temp);
                     } else if ("weather".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: weather的type值"+type);
                         String weather = parser.nextText();
-                        weatherInfo.setTemp(weather);
+                        weatherInfo.setWeather(weather);
                     } else if ("name".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: name的type值"+type);
                         String name = parser.nextText();
-                        weatherInfo.setTemp(name);
+                        weatherInfo.setName(name);
                     } else if ("pm".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: pm的type值"+type);
                         String pm = parser.nextText();
-                        weatherInfo.setTemp(pm);
+                        weatherInfo.setPm(pm);
                     } else if ("wind".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: wind的type值"+type);
                         String wind = parser.nextText();
-                        weatherInfo.setTemp(wind);
+                        weatherInfo.setWind(wind);
                     }
                     break;
                 //一个结点结束的标签
                 case XmlPullParser.END_TAG:
                     //一个城市的信息处理完毕，city的标签结束
                     if ("city".equals(parser.getName())) {
+                        Log.i(TAG, "getWeatherInfos: wind的type值"+type);
                         //一个城市的信息已经处理完毕
                         weatherInfos.add(weatherInfo);
                         weatherInfo = null;

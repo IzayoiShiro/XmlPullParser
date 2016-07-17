@@ -1,5 +1,6 @@
 package com.example.xmlpullparser;
 
+import android.content.res.AssetManager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -10,6 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
     private List<Map<String, String>> list;
     private String temp, weather, name, pm, wind;
     private ImageView icon;
+    private View v;
     private static final String TAG = "MainActivity";
 
     @Override
@@ -39,21 +42,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         //初始化控件
         init();
         try {
-            List<WeatherInfo> infos = WeatherService.getWeatherInfos(MainActivity.class.
-                    getClassLoader().getResourceAsStream("weather.xml"));
+//            List<WeatherInfo> infos = WeatherService.getWeatherInfos(MainActivity.class.
+//                    getClassLoader().getResourceAsStream("weather.xml"));
+//            List<WeatherInfo> infos = WeatherService.getWeatherInfos(this.getResources()
+//                    .openRawResource(R.xml.weather));
+            AssetManager am = this.getAssets();
+            InputStream is = am.open("weather.xml");
+            List<WeatherInfo> infos = WeatherService.getWeatherInfos(is);
             list = new ArrayList<Map<String, String>>();
             for (WeatherInfo info : infos) {
                 map = new HashMap<String, String>();
                 map.put("temp", info.getTemp());
-                map.put("weather", info.getWeather());
+                map.put("weather.xml.xml", info.getWeather());
                 map.put("name", info.getName());
                 map.put("pm", info.getPm());
                 map.put("wind", info.getWind());
-                Log.i(TAG, "init: " + info.getTemp());
-                Log.i(TAG, "init: " + info.getWeather());
-                Log.i(TAG, "init: " + info.getName());
-                Log.i(TAG, "init: " + info.getPm());
-                Log.i(TAG, "init: " + info.getWind());
                 list.add(map);
             }
         } catch (Exception e) {
@@ -61,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
             Log.i(TAG, "onCreate: 文件解析失败");
             Toast.makeText(this, "文件解析失败", Toast.LENGTH_SHORT).show();
         }
-        getMap(1, android.R.drawable.sym_def_app_icon);
+        getMap(1, android.R.drawable.sym_def_app_icon,R.drawable.a1);
     }
 
     private void init() {
@@ -74,15 +77,14 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         findViewById(R.id.city_sh).setOnClickListener(this);
         findViewById(R.id.city_bj).setOnClickListener(this);
         findViewById(R.id.Harbin).setOnClickListener(this);
-        //findViewById(R.id.city_sh).setAlpha(0);
-        //findViewById(R.id.city_bj).setAlpha(0);
-        //findViewById(R.id.Harbin).setAlpha(0);
+        v = findViewById(R.id.ll_btn);
+        v.getBackground().setAlpha(200);
     }
 
-    private void getMap(int number, int iconNumber) {
+    private void getMap(int number, int iconNumber,int backgroundImage) {
         Map<String, String> bjMap = list.get(number);
         temp = bjMap.get("temp");
-        weather = bjMap.get("weather");
+        weather = bjMap.get("weather.xml.xml");
         name = bjMap.get("name");
         pm = bjMap.get("pm");
         wind = bjMap.get("wind");
@@ -92,19 +94,21 @@ public class MainActivity extends AppCompatActivity implements OnClickListener {
         select_wind.setText(wind);
         select_pm.setText(pm);
         icon.setImageResource(iconNumber);
+        v.setBackgroundResource(backgroundImage);
+
     }
 
     @Override
     public void onClick(View view) {
         switch (view.getId()) {
             case R.id.city_sh:
-                getMap(0, android.R.drawable.sym_def_app_icon);
+                getMap(0, android.R.drawable.sym_def_app_icon,R.drawable.a2);
                 break;
             case R.id.city_bj:
-                getMap(1, android.R.drawable.sym_def_app_icon);
+                getMap(1, android.R.drawable.sym_def_app_icon,R.drawable.a1);
                 break;
             case R.id.Harbin:
-                getMap(2, android.R.drawable.sym_def_app_icon);
+                getMap(2, android.R.drawable.sym_def_app_icon,R.drawable.a3);
                 break;
         }
     }
